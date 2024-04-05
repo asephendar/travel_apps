@@ -19,10 +19,10 @@ class User(db.Model):
     full_name = db.Column(db.String(255), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
-    phone_number = db.Column(db.Integer, nullable=False, unique=True)
+    phone_number = db.Column(db.String(255), nullable=False, unique=True)
     role = db.Column(db.Enum('admin', 'member', name='user_role_enum'), nullable=False, default='member')
-    created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
-    updated_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
+    updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
 class Order(db.Model):
     __tablename__ = 'orders'
@@ -34,8 +34,8 @@ class Order(db.Model):
     total_amount = db.Column(db.Integer, nullable=False, default=0)
     status_payment = db.Column(db.Boolean, nullable=False, default=False)
     order_status = db.Column(db.Enum('pending', 'processing', 'completed', name='order_status_enum'), nullable=False, default='pending') 
-    created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
-    updated_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
+    updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
 class OrderSchedule(db.Model):
     __tablename__ = 'order_schedules'
@@ -56,8 +56,8 @@ class Schedule(db.Model):
     date_trip = db.Column(db.Date, nullable=False)
     available_seats = db.Column(db.Integer, nullable=False)
     status_still_available = db.Column(db.Boolean, nullable=False, default=True)
-    created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
-    updated_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
+    updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
 class Car(db.Model):
     __tablename__ = 'cars'
@@ -67,5 +67,5 @@ class Car(db.Model):
     specification = db.Column(db.Text, nullable=False)
     capacity = db.Column(db.Integer, nullable=False)
     rental_price = db.Column(db.Integer, nullable=False)
-    created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
-    updated_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
+    updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
