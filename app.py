@@ -1,4 +1,5 @@
 from app_travel.models import app
+from app_travel.routes import *
 
 @app.route('/')
 def hello_world():
