@@ -1,8 +1,8 @@
 """Initial migration.
 
-Revision ID: 7c26c70f0ebf
+Revision ID: eeb7d868b26c
 Revises: 
-Create Date: 2024-04-05 15:42:02.212656
+Create Date: 2024-04-08 21:13:30.080761
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7c26c70f0ebf'
+revision = 'eeb7d868b26c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,9 +23,8 @@ def upgrade():
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.Column('specification', sa.Text(), nullable=False),
     sa.Column('capacity', sa.Integer(), nullable=False),
-    sa.Column('rental_price', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
-    sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.PrimaryKeyConstraint('id_car')
     )
     op.create_table('users',
@@ -35,10 +34,10 @@ def upgrade():
     sa.Column('full_name', sa.String(length=255), nullable=False),
     sa.Column('address', sa.String(length=255), nullable=False),
     sa.Column('email', sa.String(length=255), nullable=False),
-    sa.Column('phone_number', sa.Integer(), nullable=False),
+    sa.Column('phone_number', sa.String(length=255), nullable=False),
     sa.Column('role', sa.Enum('admin', 'member', name='user_role_enum'), nullable=False),
-    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
-    sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.PrimaryKeyConstraint('id_user'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('phone_number'),
@@ -52,8 +51,8 @@ def upgrade():
     sa.Column('total_amount', sa.Integer(), nullable=False),
     sa.Column('status_payment', sa.Boolean(), nullable=False),
     sa.Column('order_status', sa.Enum('pending', 'processing', 'completed', name='order_status_enum'), nullable=False),
-    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
-    sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.ForeignKeyConstraint(['id_user'], ['users.id_user'], ),
     sa.PrimaryKeyConstraint('id_order')
     )
@@ -68,8 +67,9 @@ def upgrade():
     sa.Column('date_trip', sa.Date(), nullable=False),
     sa.Column('available_seats', sa.Integer(), nullable=False),
     sa.Column('status_still_available', sa.Boolean(), nullable=False),
-    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
-    sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('rental_price', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.ForeignKeyConstraint(['id_car'], ['cars.id_car'], ),
     sa.PrimaryKeyConstraint('id_schedule')
     )

@@ -56,6 +56,7 @@ class Schedule(db.Model):
     date_trip = db.Column(db.Date, nullable=False)
     available_seats = db.Column(db.Integer, nullable=False)
     status_still_available = db.Column(db.Boolean, nullable=False, default=True)
+    rental_price = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
     updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
@@ -66,6 +67,5 @@ class Car(db.Model):
     name = db.Column(db.String(255), nullable=False)
     specification = db.Column(db.Text, nullable=False)
     capacity = db.Column(db.Integer, nullable=False)
-    rental_price = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
     updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
