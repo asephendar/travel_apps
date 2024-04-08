@@ -1,5 +1,5 @@
 from flask import request
-from app_travel.models import app, db, User, Order, OrderSchedule, Schedule, Car
+from app_travel.Models import app, db, Car
 
 @app.route('/cars', methods=['GET'])
 def get_cars():

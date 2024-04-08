@@ -1,5 +1,5 @@
-from app_travel.models import app
-from app_travel.routes import *
+from app_travel.Models import app
+from app_travel.Routes.Cars import app
 
 @app.route('/')
 def hello_world():

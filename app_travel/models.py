@@ -34,6 +34,7 @@ class Order(db.Model):
     total_amount = db.Column(db.Integer, nullable=False, default=0)
     status_payment = db.Column(db.Boolean, nullable=False, default=False)
     order_status = db.Column(db.Enum('pending', 'processing', 'completed', name='order_status_enum'), nullable=False, default='pending') 
+    payment_gateway= db.Column(db.Enum('midtrans', name='payment_gateway_enum'), nullable=False, default='midtrans')
     created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
     updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
