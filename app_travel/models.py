@@ -70,3 +70,4 @@ class Car(db.Model):
     capacity = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
     updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    schedules=db.relationship('Schedule', backref='car', lazy=True)

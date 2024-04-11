@@ -11,7 +11,6 @@ def get_cars():
             'name': el.name,
             'specification': el.specification,
             'capacity': el.capacity,
-            'rental_price': el.rental_price,
             'created_at': el.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             'updated_at': el.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
         })
@@ -22,8 +21,7 @@ def create_car():
     data = Car(
         name=request.form['name'],
         specification=request.form['specification'],
-        capacity=request.form['capacity'],
-        rental_price=request.form['rental_price'],
+        capacity=request.form['capacity']
     )
     db.session.add(data)
     db.session.commit()
@@ -35,8 +33,7 @@ def update_car(id_car):
     if data:
         data.name = request.form['name'],
         data.specification = request.form['specification'],
-        data.capacity = request.form['capacity'],
-        data.rental_price = request.form['rental_price']
+        data.capacity = request.form['capacity']
         db.session.commit()
         return {'message': 'Car updated successfully'}
     else:
