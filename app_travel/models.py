@@ -23,6 +23,14 @@ class User(db.Model):
     role = db.Column(db.Enum('admin', 'member', name='user_role_enum'), nullable=False, default='member')
     created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
     updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    order = db.relationship('Order', backref='user', lazy=True)
+    
+    def is_active(self):
+        return True
+    def get_id(self):
+        return str(self.id_user)
+    def is_authenticated(self): # ini Cookies
+        return True
 
 class Order(db.Model):
     __tablename__ = 'orders'
@@ -37,7 +45,8 @@ class Order(db.Model):
     payment_gateway= db.Column(db.Enum('midtrans', name='payment_gateway_enum'), nullable=False, default='midtrans')
     created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
     updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
-
+    order_schedule = db.relationship('OrderSchedule', backref='order', lazy=True)
+    
 class OrderSchedule(db.Model):
     __tablename__ = 'order_schedules'
 
@@ -60,6 +69,7 @@ class Schedule(db.Model):
     rental_price = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
     updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    order_schedule = db.relationship('OrderSchedule', backref='schedule', lazy=True)
 
 class Car(db.Model):
     __tablename__ = 'cars'
