@@ -6,18 +6,21 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.route('/login', methods=['POST'])
 def login():
-    if current_user.is_authenticated:
-        return {'message': 'You are already logged in'}
-    
+    # if current_user.is_authenticated:
+    #     return {'message': 'You are already logged in'}
     username = request.headers.get('username')
     password = request.headers.get('password')
 
-    user = User.query.filter_by(username = username).first()
+    user = User.query.filter_by(username=username).first()
     if user and check_password_hash(user.password, password):
         login_user(user)
         return {'message': 'Login successful'}
+    elif user and not check_password_hash(user.password, password):
+        return {'message': 'Invalid password'}, 401
     else:
-        return {'message': 'Invalid username or password'}, 401
+        return {'message': 'Invalid username'}, 401
+
+
 
 @app.route("/logout", methods=["GET"])
 @login_required

@@ -1,5 +1,5 @@
 from flask import request
-from app_travel.Models import app, db, Order, Schedule, OrderSchedule, Car, User
+from app_travel.Models import app, db, Order, Schedule, OrderSchedule
 from datetime import datetime
 from flask_login import login_required, current_user
 

@@ -1,5 +1,4 @@
-from flask import request
-from app_travel.Models import app, db, OrderSchedule, Order, Schedule, User
+from app_travel.Models import app, db, OrderSchedule
 from flask_login import login_required, current_user
 
 @app.route('/order_schedules', methods=['GET'])
