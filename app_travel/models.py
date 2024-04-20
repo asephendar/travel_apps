@@ -1,14 +1,26 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager, create_access_token
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['JWT_SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/travel_apps'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+jwt = JWTManager(app)
+
+class UserRole(db.Model):
+    __tablename__ = 'user_roles'
+
+    id_user_role = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_user = db.Column(db.Integer, db.ForeignKey('users.id_user'), nullable=False)
+    role = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
+    updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -20,9 +32,9 @@ class User(db.Model):
     address = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
     phone_number = db.Column(db.String(255), nullable=False, unique=True)
-    role = db.Column(db.Enum('admin', 'member', name='user_role_enum'), nullable=False, default='member')
     created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
     updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    user_roles = db.relationship('UserRole', backref='user', lazy=True)
     order = db.relationship('Order', backref='user', lazy=True)
     
     def is_active(self):
@@ -31,6 +43,16 @@ class User(db.Model):
         return str(self.id_user)
     def is_authenticated(self): # ini Cookies
         return True
+    
+    @classmethod
+    def authenticate(cls, username, password):
+        user = cls.query.filter_by(username=username).first()
+        if user and user.password == password:
+            return user
+
+    def generate_access_token(self):
+        access_token = create_access_token(identity=self.id_user)
+        return access_token
 
 class Order(db.Model):
     __tablename__ = 'orders'

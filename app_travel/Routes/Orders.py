@@ -6,7 +6,7 @@ from flask_login import login_required, current_user
 @app.route('/orders', methods=['GET'])
 @login_required
 def get_orders():
-    if current_user.role == 'admin':
+    if any(role.role == 'admin' for role in current_user.user_roles):
         orders = Order.query.order_by(Order.id_order.desc()).all()
         order_list = []
         for order in orders:
@@ -84,7 +84,7 @@ def search_schedule():
 @app.route('/orders', methods=['POST'])
 @login_required
 def create_order():
-    if current_user.role == 'member':
+    if any(role.role == 'member' for role in current_user.user_roles):
         data = request.json
 
         order = Order(
@@ -122,7 +122,7 @@ def create_order():
 @app.route('/orders/<int:id_order>', methods=['PUT'])
 @login_required
 def update_order(id_order):
-    if current_user.role == 'admin':
+    if any(role.role == 'admin' for role in current_user.user_roles):
         order = Order.query.get(id_order)
         if order:
             order.order_status = request.form['order_status'].lower()
@@ -137,7 +137,7 @@ def update_order(id_order):
 @app.route('/orders/<int:id_order>', methods=['DELETE'])
 @login_required
 def delete_order(id_order):
-    if current_user.role == 'admin':
+    if any(role.role == 'admin' for role in current_user.user_roles):
         order = Order.query.get(id_order)
         if order:
             db.session.delete(order)

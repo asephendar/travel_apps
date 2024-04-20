@@ -1,26 +1,29 @@
 from flask import request
-from flask_login import login_user, logout_user, login_required, current_user
-from app_travel.Models import app, db, User
+from flask_login import login_user, logout_user, login_required
+from app_travel.Models import app, db, User, UserRole
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 @app.route('/login', methods=['POST'])
 def login():
-    # if current_user.is_authenticated:
-    #     return {'message': 'You are already logged in'}
-    username = request.headers.get('username')
-    password = request.headers.get('password')
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
 
     user = User.query.filter_by(username=username).first()
     if user and check_password_hash(user.password, password):
         login_user(user)
-        return {'message': 'Login successful'}
-    elif user and not check_password_hash(user.password, password):
-        return {'message': 'Invalid password'}, 401
+        access_token = user.generate_access_token()
+        return {'message': 'Login successful', 'access_token': access_token}, 200
     else:
-        return {'message': 'Invalid username'}, 401
+        return {'message': 'Invalid username or password'}, 401
 
-
+@app.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    user = User.query.get(current_user)
+    return {'user_id': user.id_user, 'username': user.username}, 200
 
 @app.route("/logout", methods=["GET"])
 @login_required
@@ -31,33 +34,48 @@ def logout():
 @app.route("/registers", methods=["POST"])
 def register():
     user = User(
-        username=request.form['username'],
-        password=generate_password_hash(request.form['password']),
-        full_name=request.form['full_name'],
-        address=request.form['address'],
-        email=request.form['email'],
-        phone_number=request.form['phone_number'],
-        role='member'
+        username=request.form.get('username'),
+        password=generate_password_hash(request.form.get('password')),
+        full_name=request.form.get('full_name'),
+        address=request.form.get('address'),
+        email=request.form.get('email'),
+        phone_number=request.form.get('phone_number')
     )
+
     db.session.add(user)
     db.session.commit()
+
+    user_role = UserRole(
+        role='member',
+        id_user=user.id_user
+    )
+
+    db.session.add(user_role)
+    db.session.commit()
+
     return {'message': 'User created successfully'}, 201
 
 @app.route('/add_admin', methods=['POST'])
 @login_required
 def add_admin():
-    if current_user.role == 'admin':
-        user = User(
-            username=request.form['username'],
-            password=request.form['password'],
-            full_name=request.form['full_name'],
-            address=request.form['address'],
-            email=request.form['email'],
-            phone_number=request.form['phone_number'],
-            role=request.form['role']
-        )
-        db.session.add(user)
-        db.session.commit()
-        return {'message': 'User created successfully'}, 201
-    else:
-        return {'message': 'Access denied'}, 403
+    user = User(
+        username=request.form.get('username'),
+        password=generate_password_hash(request.form.get('password')),
+        full_name=request.form.get('full_name'),
+        address=request.form.get('address'),
+        email=request.form.get('email'),
+        phone_number=request.form.get('phone_number')
+    )
+
+    db.session.add(user)
+    db.session.commit()
+
+    user_role = UserRole(
+        role=request.form.get('role'),
+        id_user=user.id_user
+    )
+
+    db.session.add(user_role)
+    db.session.commit()
+
+    return {'message': 'User created successfully'}, 201

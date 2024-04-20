@@ -32,7 +32,7 @@ def get_schedules():
 @app.route('/schedules', methods=['POST'])
 @login_required
 def create_schedule():
-    if current_user.role == 'admin':
+    if any(role.role == 'admin' for role in current_user.user_roles):
         data = request.json
         car_name = data['car_name']
         car = Car.query.filter_by(name=car_name).first()
@@ -61,7 +61,7 @@ def create_schedule():
 @app.route('/schedules/<int:id_schedule>', methods=['PUT'])
 @login_required
 def update_schedule(id_schedule):
-    if current_user.role == 'admin':
+    if any(role.role == 'admin' for role in current_user.user_roles):
         data = request.json
         schedule = Schedule.query.get(id_schedule)
         if schedule:
@@ -84,7 +84,7 @@ def update_schedule(id_schedule):
 @app.route('/schedules/<int:id_schedule>', methods=['DELETE'])
 @login_required
 def delete_schedule(id_schedule):
-    if current_user.role == 'admin':
+    if any(role.role == 'admin' for role in current_user.user_roles):
         schedule = Schedule.query.get(id_schedule)
         if schedule:
             db.session.delete(schedule)

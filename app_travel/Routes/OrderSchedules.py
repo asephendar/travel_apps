@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 @app.route('/order_schedules', methods=['GET'])
 @login_required
 def get_order_schedules():
-    if current_user.role == 'admin':
+    if any(role.role == 'admin' for role in current_user.user_roles):
         order_schedules = OrderSchedule.query.order_by(OrderSchedule.id_order.desc()).all()
         order_list = []
         for el in order_schedules:
@@ -67,11 +67,14 @@ def get_order_schedules():
 
 @app.route('/order_schedules/<int:id_order>', methods=['DELETE'])
 def delete_order_schedule(id_order):
-    order_schedules = OrderSchedule.query.filter_by(id_order=id_order).all()
-    if order_schedules:
-        for order_schedule in order_schedules:
-            db.session.delete(order_schedule)
-        db.session.commit()
-        return {'message': 'Order Schedules with id_order {} deleted successfully'.format(id_order)}, 200
+    if any(role.role == 'admin' for role in current_user.user_roles):
+        order_schedules = OrderSchedule.query.filter_by(id_order=id_order).all()
+        if order_schedules:
+            for order_schedule in order_schedules:
+                db.session.delete(order_schedule)
+            db.session.commit()
+            return {'message': 'Order Schedules with id_order {} deleted successfully'.format(id_order)}, 200
+        else:
+            return {'error': 'Order Schedules with id_order {} not found'.format(id_order)}, 404
     else:
-        return {'error': 'Order Schedules with id_order {} not found'.format(id_order)}, 404
+        return {'message': 'Access denied'}, 403
