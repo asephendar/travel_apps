@@ -1,8 +1,22 @@
 from flask import request
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from app_travel.Models import app, db, User, UserRole
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import jwt_required, get_jwt_identity
+
+# @app.route('/login', methods=['POST'])
+# def login():
+#     data = request.get_json()
+#     username = data.get('username')
+#     password = data.get('password')
+
+#     user = User.query.filter_by(username=username).first()
+#     if user and check_password_hash(user.password, password):
+#         login_user(user)
+#         access_token = user.generate_access_token()
+#         return {'message': 'Login successful', 'access_token': access_token}, 200
+#     else:
+#         return {'message': 'Invalid username or password'}, 401
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -10,11 +24,10 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(username = username).first()
     if user and check_password_hash(user.password, password):
         login_user(user)
-        access_token = user.generate_access_token()
-        return {'message': 'Login successful', 'access_token': access_token}, 200
+        return {'message': 'Login successful'}
     else:
         return {'message': 'Invalid username or password'}, 401
 

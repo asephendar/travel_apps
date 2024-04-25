@@ -4,27 +4,19 @@ from flask_login import login_required, current_user
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 @app.route('/cars', methods=['GET'])
-@jwt_required()
+@login_required
 def get_cars():
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-
-    if not user:
-        return {'message': 'User not found'}, 404
-
-    user_role = UserRole.query.filter_by(id_user=current_user_id).first()
-
-    if user_role and user_role.role == 'admin':
+    if any(role.role == 'admin' for role in current_user.user_roles):
         data = Car.query.order_by(Car.id_car.desc()).all()
         cars_list = []
-        for car in data:
+        for el in data:
             cars_list.append({
-                'id_car': car.id_car,
-                'name': car.name,
-                'specification': car.specification,
-                'capacity': car.capacity,
-                'created_at': car.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-                'updated_at': car.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
+                'id_car': el.id_car,
+                'name': el.name,
+                'specification': el.specification,
+                'capacity': el.capacity,
+                'created_at': el.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                'updated_at': el.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
             })
         return {'cars': cars_list}, 200
     else:
