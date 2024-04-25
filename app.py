@@ -14,5 +14,9 @@ login_manager = LoginManager(app)
 def load_user(id_user):
     return User.query.get(int(id_user))
 
+@app.route('/')
+def index():
+    return 'Hello, World!'
+
 if __name__ == '__main__':
     app.run(debug=True)
