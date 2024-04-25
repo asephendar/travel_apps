@@ -1,17 +1,17 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager, create_access_token
+# from flask_jwt_extended import JWTManager, create_access_token
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['JWT_SECRET_KEY'] = 'your_secret_key'
+# app.config['JWT_SECRET_KEY'] = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/travel_apps'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-jwt = JWTManager(app)
+# jwt = JWTManager(app)
 
 class UserRole(db.Model):
     __tablename__ = 'user_roles'
@@ -44,15 +44,15 @@ class User(db.Model):
     def is_authenticated(self): # ini Cookies
         return True
     
-    @classmethod
-    def authenticate(cls, username, password):
-        user = cls.query.filter_by(username=username).first()
-        if user and user.password == password:
-            return user
+    # @classmethod
+    # def authenticate(cls, username, password):
+    #     user = cls.query.filter_by(username=username).first()
+    #     if user and user.password == password:
+    #         return user
 
-    def generate_access_token(self):
-        access_token = create_access_token(identity=self.id_user)
-        return access_token
+    # def generate_access_token(self):
+    #     access_token = create_access_token(identity=self.id_user)
+    #     return access_token
 
 class Order(db.Model):
     __tablename__ = 'orders'

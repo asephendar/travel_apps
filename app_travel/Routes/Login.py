@@ -2,7 +2,7 @@ from flask import request
 from flask_login import login_user, logout_user, login_required, current_user
 from app_travel.Models import app, db, User, UserRole
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import jwt_required, get_jwt_identity
+# from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # @app.route('/login', methods=['POST'])
 # def login():
@@ -31,12 +31,12 @@ def login():
     else:
         return {'message': 'Invalid username or password'}, 401
 
-@app.route('/protected', methods=['GET'])
-@jwt_required()
-def protected():
-    current_user = get_jwt_identity()
-    user = User.query.get(current_user)
-    return {'user_id': user.id_user, 'username': user.username}, 200
+# @app.route('/protected', methods=['GET'])
+# @jwt_required()
+# def protected():
+#     current_user = get_jwt_identity()
+#     user = User.query.get(current_user)
+#     return {'user_id': user.id_user, 'username': user.username}, 200
 
 @app.route("/logout", methods=["GET"])
 @login_required

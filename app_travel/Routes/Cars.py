@@ -1,7 +1,6 @@
 from flask import request
-from app_travel.Models import app, db, Car, User, UserRole
+from app_travel.Models import app, db, Car
 from flask_login import login_required, current_user
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
 @app.route('/cars', methods=['GET'])
 @login_required
