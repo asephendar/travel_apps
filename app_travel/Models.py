@@ -7,7 +7,8 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'your_secret_key'
 # app.config['JWT_SECRET_KEY'] = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/travel_apps'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/travel_apps'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://default:rC9PDoSuJiv5@ep-dry-queen-a4afkg37.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
