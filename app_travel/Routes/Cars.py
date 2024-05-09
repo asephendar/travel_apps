@@ -1,18 +1,14 @@
 from flask import request
 from app_travel.Models import app, db, Car
 from flask_login import login_required, current_user
-from flask_uploads import UploadSet, IMAGES, configure_uploads, UploadNotAllowed
+from werkzeug.utils import secure_filename
 import os
 
-# Inisialisasi UploadSet untuk mengelola jenis file gambar
-photos = UploadSet('photos', IMAGES)
+UPLOAD_FOLDER = 'app_travel/images/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-# Konfigurasi tempat penyimpanan file gambar
-app.config['UPLOADED_PHOTOS_DEST'] = 'app_travel/images'
-
-# Terapkan konfigurasi untuk unggahan
-configure_uploads(app, photos)
-
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/cars', methods=['GET'])
 @login_required
@@ -38,24 +34,33 @@ def get_cars():
 @login_required
 def create_car():
     if any(role.role == 'admin' for role in current_user.user_roles):
-        try:
-            image = None
-            if 'image' in request.files:
-                filename = photos.save(request.files['image'])
-                image = photos.url(filename)
-            
+        # Check if the post request has the file part
+        if 'image' not in request.files:
+            return {'message': 'No file part'}, 400
+
+        file = request.files['image']
+
+        # If user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            return {'message': 'No selected file'}, 400
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(file_path)
+
             data = Car(
                 name=request.form['name'],
                 specification=request.form['specification'],
                 capacity=request.form['capacity'],
-                image=image 
+                image=file_path  # Save the path to the image file
             )
             db.session.add(data)
             db.session.commit()
-            
             return {'message': 'Car created successfully'}, 201
-        except UploadNotAllowed:
-            return {'message': 'Invalid image format'}, 400
+        else:
+            return {'message': 'Invalid file type'}, 400
     else:
         return {'message': 'Access denied'}, 403
 
@@ -67,10 +72,7 @@ def update_car(id_car):
         if data:
             data.name = request.form['name'],
             data.specification = request.form['specification'],
-            data.capacity = request.form['capacity'],
-            if 'image' in request.files:
-                filename = photos.save(request.files['image'])
-                data.image = photos.url(filename)
+            data.capacity = request.form['capacity']
             db.session.commit()
             return {'message': 'Car updated successfully'}
         else:
@@ -78,24 +80,25 @@ def update_car(id_car):
     else:
         return {'message': 'Access denied'}, 403
 
-@app.route('/cars/<int:id_car>', methods=['DELETE'])
+@app.route('/cars/<int:car_id>', methods=['DELETE'])
 @login_required
-def delete_car(id_car):
-    if any(role.role == 'admin' for role in current_user.user_roles):
-        car = Car.query.get(id_car)
-        if car:
-            # Hapus file gambar jika ada
-            if car.image:
-                image_path = os.path.join(app.root_path, app.config['UPLOADED_PHOTOS_DEST'], car.image)
-                if os.path.exists(image_path):
-                    os.remove(image_path)
+def delete_car(car_id):
+    car = Car.query.get(car_id)
 
-            db.session.delete(car)
-            db.session.commit()
-            
-            return {'message': 'Car deleted successfully'}, 200
-        else:
-            return {'message': 'Car not found'}, 404
+    if not car:
+        return {'message': 'Car not found'}, 404
+
+    if any(role.role == 'admin' for role in current_user.user_roles):
+        # Hapus file gambar jika ada
+        if car.image:
+            try:
+                os.remove(car.image)
+            except OSError as e:
+                print("Error: %s : %s" % (car.image, e.strerror))
+
+        db.session.delete(car)
+        db.session.commit()
+        return {'message': 'Car deleted successfully'}, 200
     else:
         return {'message': 'Access denied'}, 403
 
