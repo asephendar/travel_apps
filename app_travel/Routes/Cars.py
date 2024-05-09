@@ -70,15 +70,26 @@ def update_car(id_car):
     if any(role.role == 'admin' for role in current_user.user_roles):
         data = Car.query.get(id_car)
         if data:
-            data.name = request.form['name'],
-            data.specification = request.form['specification'],
+            data.name = request.form['name']
+            data.specification = request.form['specification']
             data.capacity = request.form['capacity']
+
+            if 'image' in request.files:
+                file = request.files['image']
+
+                if file.filename != '' and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(UPLOAD_FOLDER, filename)
+                    file.save(file_path)
+                    data.image = file_path
+
             db.session.commit()
             return {'message': 'Car updated successfully'}
         else:
             return {'message': 'Car not found'}, 404
     else:
         return {'message': 'Access denied'}, 403
+
 
 @app.route('/cars/<int:car_id>', methods=['DELETE'])
 @login_required
