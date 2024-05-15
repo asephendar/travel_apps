@@ -1,15 +1,17 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 # from flask_jwt_extended import JWTManager, create_access_token
 from flask_cors import CORS
 
 app = Flask(__name__)
+UPLOAD_FOLDER = 'images'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.config['SECRET_KEY'] = 'your_secret_key'
 # app.config['JWT_SECRET_KEY'] = 'your_secret_key'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/travel_apps'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://default:rC9PDoSuJiv5@ep-dry-queen-a4afkg37.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/travel_apps'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://default:rC9PDoSuJiv5@ep-dry-queen-a4afkg37.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -107,3 +109,8 @@ class Car(db.Model):
     created_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp())
     updated_at = db.Column(db.TIMESTAMP(timezone=True), server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
     schedules=db.relationship('Schedule', backref='car', lazy=True)
+
+
+@app.route('/uploads/<filename>', methods=['GET'])
+def get_uploaded_image(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
