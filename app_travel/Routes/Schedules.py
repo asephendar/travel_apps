@@ -18,13 +18,14 @@ def get_schedules():
             'date_trip': schedule.date_trip.strftime("%Y-%m-%d"),
             'available_seats': schedule.available_seats,
             'status_still_available': schedule.status_still_available,
-            'rental_price': f"Rp {schedule.rental_price:,}",
+            'rental_price': f"IDR {schedule.rental_price:,}",
             'created_at': schedule.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             'updated_at': schedule.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
             'car': {
                 'name': schedule.car.name,
                 'specification': schedule.car.specification,
-                'capacity': schedule.car.capacity
+                'capacity': schedule.car.capacity,
+                'image': schedule.car.image
             }
         })
     return {'schedules': schedules_list}, 200

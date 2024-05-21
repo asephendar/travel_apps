@@ -24,10 +24,16 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    user = User.query.filter_by(username = username).first()
+    user = User.query.filter_by(username=username).first()
     if user and check_password_hash(user.password, password):
         login_user(user)
-        return {'message': 'Login successful'}
+        # Mengambil role user sebagai string
+        role = 'member'  # Default role
+        for user_role in user.user_roles:
+            if user_role.role == 'admin':
+                role = 'admin'
+                break
+        return {'message': 'Login successful', 'role': role}
     else:
         return {'message': 'Invalid username or password'}, 401
 
