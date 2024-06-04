@@ -5,6 +5,8 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True, origins=['http://127.0.0.1:5500'], methods=['GET', 'POST', 'PUT', 'DELETE'], allow_headers=['Content-Type', 'Authorization'], expose_headers=['Authorization'])
+
 UPLOAD_FOLDER = 'images'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -16,7 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/t
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 # jwt = JWTManager(app)
-CORS(app)
+
 
 class UserRole(db.Model):
     __tablename__ = 'user_roles'
@@ -89,7 +91,6 @@ class Schedule(db.Model):
     to_location = db.Column(db.String(255), nullable=False)
     departure_time = db.Column(db.Time, nullable=False)
     arrival_time = db.Column(db.Time, nullable=False)
-    day_of_week = db.Column(db.String(255), nullable=False)
     date_trip = db.Column(db.Date, nullable=False)
     available_seats = db.Column(db.Integer, nullable=False)
     status_still_available = db.Column(db.Boolean, nullable=False, default=True)

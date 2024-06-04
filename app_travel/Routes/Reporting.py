@@ -75,7 +75,7 @@ def top_users():
         })
 
     return {'top_users': top_users}
-
+# ambil url seacrh, per-halaman limit=10, page untuk halaman berapa
 
 
 

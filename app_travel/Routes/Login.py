@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, session
 from flask_login import login_user, logout_user, login_required, current_user
 from app_travel.Models import app, db, User, UserRole
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -17,6 +17,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 #         return {'message': 'Login successful', 'access_token': access_token}, 200
 #     else:
 #         return {'message': 'Invalid username or password'}, 401
+
+@app.route('/check_login')
+# @login_required
+def check_login():
+    # return {'loggedIn': True}
+    if 'username' in session:
+        return {'authenticated': True}
+    else:
+        return {'authenticated': False}, 401
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -44,11 +53,17 @@ def login():
 #     user = User.query.get(current_user)
 #     return {'user_id': user.id_user, 'username': user.username}, 200
 
-@app.route("/logout", methods=["GET"])
+@app.route('/logout', methods=['POST'])  # Ubah metode menjadi POST
 @login_required
 def logout():
     logout_user()
     return {'message': 'Logout successful'}
+
+# @app.route("/logout", methods=["GET"])
+# @login_required
+# def logout():
+#     logout_user()
+#     return {'message': 'Logout successful'}
 
 @app.route("/registers", methods=["POST"])
 def register():

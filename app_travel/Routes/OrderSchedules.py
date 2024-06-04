@@ -13,23 +13,27 @@ def get_order_schedules():
                 'id_schedule': el.id_schedule,
                 'order': {
                     'id_user': el.order.id_user,
-                    'date': el.order.date.strftime('%Y-%m-%d'),
+                    'date': el.order.date.strftime("%d-%m-%Y"),
                     'number_participants': el.order.number_participants,
                     'total_amount': f"Rp {el.order.total_amount:,}",
+                    'status_order': el.order.order_status,
                     'status_payment': el.order.status_payment,
                     'payment_gateway': el.order.payment_gateway,
                     'user': {
                         'username': el.order.user.username,
-                        'full_name': el.order.user.full_name
+                        'full_name': el.order.user.full_name,
+                        'email': el.order.user.email,
+                        'phone_number': el.order.user.phone_number
                     }
                 },
                 'schedule': {
+                    'image': el.schedule.car.image,
+                    'name': el.schedule.car.name,
                     'from_location': el.schedule.from_location,
                     'to_location': el.schedule.to_location,
                     'departure_time': el.schedule.departure_time.strftime('%H:%M'),
                     'arrival_time': el.schedule.arrival_time.strftime('%H:%M'),
-                    'day_of_week': el.schedule.day_of_week,
-                    'date_trip': el.schedule.date_trip.strftime('%Y-%m-%d'),
+                    'date_trip': el.schedule.date_trip.strftime("%d-%m-%Y"),
                     'rental_price': f"Rp {el.schedule.rental_price:,}"
                 }
             })
@@ -43,23 +47,27 @@ def get_order_schedules():
                 'id_schedule': el.id_schedule,
                 'order': {
                     'id_user': el.order.id_user,
-                    'date': el.order.date.strftime('%Y-%m-%d'),
+                    'date': el.order.date.strftime("%d-%m-%Y"),
                     'number_participants': el.order.number_participants,
                     'total_amount': f"Rp {el.order.total_amount:,}",
+                    'status_order': el.order.order_status,
                     'status_payment': el.order.status_payment,
                     'payment_gateway': el.order.payment_gateway,
                     'user': {
                         'username': el.order.user.username,
-                        'full_name': el.order.user.full_name
+                        'full_name': el.order.user.full_name,
+                        'email': el.order.user.email,
+                        'phone_number': el.order.user.phone_number
                     }
                 },
                 'schedule': {
+                    'image': el.schedule.car.image,
+                    'name': el.schedule.car.name,
                     'from_location': el.schedule.from_location,
                     'to_location': el.schedule.to_location,
                     'departure_time': el.schedule.departure_time.strftime('%H:%M'),
                     'arrival_time': el.schedule.arrival_time.strftime('%H:%M'),
-                    'day_of_week': el.schedule.day_of_week,
-                    'date_trip': el.schedule.date_trip.strftime('%Y-%m-%d'),
+                    'date_trip': el.schedule.date_trip.strftime("%d-%m-%Y"),
                     'rental_price': f"Rp {el.schedule.rental_price:,}"
                 }
             })
