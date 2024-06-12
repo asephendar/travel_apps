@@ -40,14 +40,12 @@ def get_cars():
 def create_car():
     if current_user.is_authenticated:
         if any(role.role == 'admin' for role in current_user.user_roles):
-            # Check if the post request has the file part
+   
             if 'image' not in request.files:
                 return {'message': 'No file part'}, 400
 
             file = request.files['image']
 
-            # If user does not select file, browser also
-            # submit an empty part without filename
             if file.filename == '':
                 return {'message': 'No selected file'}, 400
 

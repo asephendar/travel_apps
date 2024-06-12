@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=['http://127.0.0.1:5500'], methods=['GET', 'POST', 'PUT', 'DELETE'], allow_headers=['Content-Type', 'Authorization'], expose_headers=['Authorization'])
+CORS(app, supports_credentials=True, origins=['http://127.0.0.1:5500','https://portofolio-travel.vercel.app'], methods=['GET', 'POST', 'PUT', 'DELETE'], allow_headers=['Content-Type', 'Authorization'], expose_headers=['Authorization'])
 
 UPLOAD_FOLDER = 'images'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

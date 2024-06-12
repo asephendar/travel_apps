@@ -19,13 +19,20 @@ from werkzeug.security import generate_password_hash, check_password_hash
 #         return {'message': 'Invalid username or password'}, 401
 
 @app.route('/check_login')
-# @login_required
+@login_required
 def check_login():
-    # return {'loggedIn': True}
-    if 'username' in session:
-        return {'authenticated': True}
-    else:
-        return {'authenticated': False}, 401
+    if current_user.is_authenticated:
+        Username = current_user.username
+        role = 'member'  # Default role
+        for user_role in current_user.user_roles:
+            if user_role.role == 'admin':
+                role = 'admin'
+                break
+        return {'message': 'Login successful', 'role': role, 'loggedIn': True}
+    # if 'username' in session:
+    #     return {'authenticated': True}
+    # else:
+    #     return {'authenticated': False}, 401
 
 @app.route('/login', methods=['POST'])
 def login():
